@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>R&D | Daniel Wee</title>
+<meta name="description" content="Daniel Wee, lighting and compositing artist and lecturer in Malaysia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@200..800&display=swap" rel="stylesheet">
+<script>
+  // Load the newest design file (refreshed at least once a minute, so updates show up right away)
+  document.write('<link rel="stylesheet" href="assets/style.css?v=' + Math.floor(Date.now() / 60000) + '">');
+</script>
+<noscript><link rel="stylesheet" href="assets/style.css"></noscript>
+</head>
+<body data-page="rnd">
+<main class="page-top">
+  <header class="wrap page-head">
+    <h1>R&amp;D</h1>
+    <p class="lede">Experiments, tools, tests and look development.</p>
+  </header>
+  <div class="wrap posts" id="rnd-list"></div>
+</main>
+<script>
+  // Always load the newest content (skips old cached copies)
+  (function () {
+    var c = document.createElement("script");
+    c.src = "assets/content.js?v=" + Date.now();
+    c.onload = function () { var s = document.createElement("script"); s.src = "assets/site.js?v=" + Math.floor(Date.now() / 60000); document.body.appendChild(s); };
+    document.body.appendChild(c);
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Work | Daniel Wee</title>
+<meta name="description" content="Daniel Wee, lighting and compositing artist and lecturer in Malaysia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@200..800&display=swap" rel="stylesheet">
+<script>
+  // Load the newest design file (refreshed at least once a minute, so updates show up right away)
+  document.write('<link rel="stylesheet" href="assets/style.css?v=' + Math.floor(Date.now() / 60000) + '">');
+</script>
+<noscript><link rel="stylesheet" href="assets/style.css"></noscript>
+</head>
+<body data-page="work">
+<main class="page-top">
+  <header class="wrap page-head">
+    <h1>Work</h1>
+    <div class="chips" id="filters" role="group" aria-label="Filter by category"></div>
+  </header>
+  <div class="wrap work-grid" id="work-grid"></div>
+</main>
+<script>
+  // Always load the newest content (skips old cached copies)
+  (function () {
+    var c = document.createElement("script");
+    c.src = "assets/content.js?v=" + Date.now();
+    c.onload = function () { var s = document.createElement("script"); s.src = "assets/site.js?v=" + Math.floor(Date.now() / 60000); document.body.appendChild(s); };
+    document.body.appendChild(c);
+  })();
+</script>
+</body>
+</html>

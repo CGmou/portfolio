@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About | Daniel Wee</title>
+<meta name="description" content="Daniel Wee, lighting and compositing artist and lecturer in Malaysia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@200..800&display=swap" rel="stylesheet">
+<script>
+  // Load the newest design file (refreshed at least once a minute, so updates show up right away)
+  document.write('<link rel="stylesheet" href="assets/style.css?v=' + Math.floor(Date.now() / 60000) + '">');
+</script>
+<noscript><link rel="stylesheet" href="assets/style.css"></noscript>
+</head>
+<body data-page="about">
+<main class="page-top">
+  <div class="wrap about page-head">
+    <div class="frame" id="about-photo"></div>
+    <div>
+      <h1 id="about-name"></h1>
+      <p class="alias" id="about-alias"></p>
+      <p class="role" id="about-role"></p>
+      <div class="bio" id="about-bio"></div>
+
+      <h2>Experience</h2>
+      <ul class="exp" id="about-exp"></ul>
+
+      <h2>Tools</h2>
+      <ul class="tools" id="about-tools"></ul>
+
+      <div class="contact-card" id="contact">
+        <p class="lede" style="margin-bottom:.75rem">For projects, workshops or just to say hello:</p>
+        <a class="mail" id="about-mail"></a>
+        <ul class="socials" id="about-socials"></ul>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  // Always load the newest content (skips old cached copies)
+  (function () {
+    var c = document.createElement("script");
+    c.src = "assets/content.js?v=" + Date.now();
+    c.onload = function () { var s = document.createElement("script"); s.src = "assets/site.js?v=" + Math.floor(Date.now() / 60000); document.body.appendChild(s); };
+    document.body.appendChild(c);
+  })();
+</script>
+</body>
+</html>

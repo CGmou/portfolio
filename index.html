@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daniel Wee | Lighting and Compositing Artist</title>
+<meta name="description" content="Daniel Wee, lighting and compositing artist and lecturer in Malaysia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@200..800&display=swap" rel="stylesheet">
+<script>
+  // Load the newest design file (refreshed at least once a minute, so updates show up right away)
+  document.write('<link rel="stylesheet" href="assets/style.css?v=' + Math.floor(Date.now() / 60000) + '">');
+</script>
+<noscript><link rel="stylesheet" href="assets/style.css"></noscript>
+</head>
+<body data-page="home">
+<main>
+  <h1 class="sr">Daniel Wee, lighting and compositing artist</h1>
+  <section class="showreel" aria-label="Showreel">
+    <div class="wrap reel-ui">
+      <button class="btn glass" id="sound" aria-pressed="false"></button>
+      <button class="btn primary" id="full-reel">Watch full showreel</button>
+    </div>
+  </section>
+
+  <section class="wrap intro">
+    <div class="frame" id="intro-photo"></div>
+    <div>
+      <p class="big" id="intro-text"></p>
+      <p class="meta" id="intro-meta"></p>
+      <a class="btn" href="about.html">More about me</a>
+    </div>
+  </section>
+
+  <section class="wrap" aria-label="Explore">
+    <div class="panels" id="panels"></div>
+  </section>
+
+  <section class="wrap block">
+    <div class="block-head"><h2>Latest R&amp;D</h2><a class="more" href="rnd.html">All R&amp;D</a></div>
+    <div class="posts" id="latest"></div>
+  </section>
+</main>
+<script>
+  // Always load the newest content (skips old cached copies)
+  (function () {
+    var c = document.createElement("script");
+    c.src = "assets/content.js?v=" + Date.now();
+    c.onload = function () { var s = document.createElement("script"); s.src = "assets/site.js?v=" + Math.floor(Date.now() / 60000); document.body.appendChild(s); };
+    document.body.appendChild(c);
+  })();
+</script>
+</body>
+</html>
