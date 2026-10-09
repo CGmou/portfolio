@@ -54,7 +54,8 @@ const HOME = {
     }
   ],
   "heroPosterFocus": "23% 48%",
-  "introHeading": "Daniel Wee Ke Xian"
+  "introHeading": "Daniel Wee Ke Xian",
+  "heroMobileVideo": "media/daniel-wee-lighting-and-compositing-showreel-2025-v1-1080p-phone.mp4"
 };
 
 const SHOWREELS = [
