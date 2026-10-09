@@ -108,41 +108,72 @@ const img = (src, alt = "", focus) => {
   const tabNames = { work: "Work", showreels: "Showreels", rnd: "R&D", about: "About" };
   document.title = page === "home" ? homeTitle : tabNames[page] ? `${tabNames[page]} | ${SITE.name}` : document.title;
 
+  const ARROW = '<span class="arr" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>';
   /* ---------------- Navigation + footer ---------------- */
   const PAGES = [["Home", "index.html", "home"], ["Showreels", "showreels.html", "showreels"], ["Work", "work.html", "work"], ["R&D", "rnd.html", "rnd"], ["About", "about.html", "about"]];
   const navKey = page === "project" ? (params.has("rnd") ? "rnd" : "work") : page;
+  // Top line: your name and a contact button (scrolls away with the page)
+  const top = document.createElement("header");
+  top.className = "topline";
+  top.innerHTML = `<div class="wrap topline-inner"><a class="brand" href="index.html">${esc(SITE.name)}</a></div>`;
+  document.body.prepend(top);
+
+  // Floating dock at the bottom of the screen (icons grow as the mouse passes over them)
+  const ICON = {
+    home: '<path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/>',
+    showreels: '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/>',
+    work: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/>',
+    rnd: '<path d="M9.5 3.5h5M10.5 3.5v5.2L5 18.2A1.6 1.6 0 0 0 6.4 20.5h11.2a1.6 1.6 0 0 0 1.4-2.3l-5.5-9.5V3.5"/><path d="M7.5 14.5h9"/>',
+    about: '<circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/>',
+    mail: '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m4 7.5 8 6 8-6"/>'
+  };
+  const svgIcon = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k]}</svg>`;
   const nav = document.createElement("nav");
-  nav.className = "nav"; nav.setAttribute("aria-label", "Main");
-  nav.innerHTML = `
-    <div class="nav-inner">
-      <a class="brand" href="index.html">${esc(SITE.name)}</a>
-      <ul class="links">${PAGES.map(([label, href, key]) =>
-        `<li><a href="${href}"${key === navKey ? ' aria-current="page"' : ""}>${label}</a></li>`).join("")}</ul>
-    </div>
-    <div class="progress"></div>`;
-  document.body.prepend(nav);
+  nav.className = "dock"; nav.setAttribute("aria-label", "Main");
+  const item = (label, href, key, extra = "") =>
+    `<a class="dock-item" href="${href}" aria-label="${label}"${key === navKey ? ' aria-current="page"' : ""}${extra}><span class="dock-ic">${svgIcon(key)}</span><span class="dock-tip">${label}</span></a>`;
+  nav.innerHTML = `<div class="progress"></div><div class="dock-row">
+    ${PAGES.map(([label, href, key]) => item(label, href, key)).join("")}
+    <span class="dock-sep" aria-hidden="true"></span>
+    ${item("Email me", `mailto:${esc(SITE.email)}`, "mail")}
+  </div>`;
+  document.body.append(nav);
+  // magnification, like a Mac dock (mouse only)
+  if (canHover && !reduced) {
+    const items = [...nav.querySelectorAll(".dock-item")];
+    const row = $(".dock-row", nav);
+    row.addEventListener("pointermove", (e) => {
+      for (const it of items) {
+        const r = it.getBoundingClientRect(), d = Math.abs(e.clientX - (r.left + r.width / 2));
+        it.style.setProperty("--m", (1 + 0.5 * Math.max(0, 1 - d / 150)).toFixed(3));
+      }
+    });
+    row.addEventListener("pointerleave", () => items.forEach(it => it.style.setProperty("--m", "1")));
+  }
 
   const footer = document.createElement("footer");
   footer.innerHTML = `
-    <div class="wrap foot">
-      <div>
-        <div class="who">${esc(SITE.name)}</div>
-        <div>${esc(SITE.title)}, ${esc(SITE.location)}</div>
+    <div class="wrap"><div class="foot-card">
+      <div class="foot-top">
+        <div>
+          <div class="who">${esc(SITE.name)}</div>
+          <p>${esc(SITE.title)}, ${esc(SITE.location)}.</p>
+        </div>
+        <a class="btn primary" href="mailto:${esc(SITE.email)}">Get in touch ${ARROW}</a>
       </div>
-      <div>
-        <a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a>
-        <ul style="margin-top:.5rem">${SITE.socials.map(([n, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a></li>`).join("")}</ul>
+      <div class="foot-cols">
+        <div><h4>Pages</h4><ul>${PAGES.map(([l, href]) => `<li><a href="${href}">${l}</a></li>`).join("")}</ul></div>
+        <div><h4>Contact</h4><ul><li><a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a></li><li>${esc(SITE.location)}</li></ul></div>
+        <div><h4>Elsewhere</h4><ul>${SITE.socials.map(([n, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a></li>`).join("")}</ul></div>
       </div>
-      <div>© ${new Date().getFullYear()} ${esc(SITE.name)} (${esc(SITE.otherName)})</div>
-    </div>`;
+      <div class="foot-bottom"><span>© ${new Date().getFullYear()} ${esc(SITE.name)} (${esc(SITE.otherName)})</span><span>${esc(SITE.title)}</span></div>
+    </div></div>`;
   document.body.append(footer);
 
   const bar = $(".progress", nav);
   function onScroll() {
     const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
     bar.style.transform = `scaleX(${Math.min(1, scrollY / max)})`;
-    const hero = $(".showreel");
-    nav.classList.toggle("clear", !!hero && scrollY < hero.offsetHeight - 120);
   }
   addEventListener("scroll", onScroll, { passive: true });
   addEventListener("resize", onScroll);
@@ -310,27 +341,36 @@ const img = (src, alt = "", focus) => {
     hero.prepend(v);
     new IntersectionObserver(([e]) => { if (!v.isConnected || reduced || dlg.open) return; e.isIntersecting ? v.play().catch(() => {}) : v.pause(); }).observe(hero);
 
-    const sound = $("#sound");
-    const ico = (on) => on
-      ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/></svg>`
-      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9.5l4 5M21 9.5l-4 5"/></svg>`;
-    const setSound = () => { sound.innerHTML = `${ico(!v.muted)}<span>${v.muted ? "Sound off" : "Sound on"}</span>`; sound.setAttribute("aria-pressed", String(!v.muted)); };
-    sound.addEventListener("click", () => { v.muted = !v.muted; if (!v.muted) v.play().catch(() => {}); setSound(); });
-    setSound();
-    if (SHOWREELS.length) $("#full-reel").addEventListener("click", () => openViewer([reelItem(SHOWREELS[0])]));
-    else $("#full-reel").remove();
+    // the home video is a silent background: no sound button
+    $("#sound")?.remove();
+    const reelBtn = $("#full-reel");
+    const copy = document.createElement("div");
+    copy.className = "hero-copy";
+    copy.innerHTML = `${HOME.headline ? `<h2 class="hero-title">${esc(HOME.headline).replace(/\*([^*]+)\*/g, "<em>$1</em>")}</h2>` : ""}${HOME.subtitle ? `<p>${esc(HOME.subtitle)}</p>` : ""}`;
+    if (SHOWREELS.length) { reelBtn.innerHTML = `Watch showreel ${ARROW}`; reelBtn.addEventListener("click", () => openViewer([reelItem(SHOWREELS[0])])); copy.append(reelBtn); }
+    else reelBtn.remove();
+    $(".reel-ui", hero)?.remove();
+    hero.append(copy);
+  }
 
-    $("#intro-text").textContent = HOME.intro;
-    $("#intro-meta").textContent = `${SITE.title}, ${SITE.location}`;
-    $("#intro-photo").append(img(HOME.portrait, SITE.name, HOME.portraitFocus));
+  if (page === "home") {
+    const intro = $(".intro");
+    intro.className = "wrap intro intro-split";
+    intro.innerHTML = `
+      <div class="intro-left">
+        <h2>${esc(HOME.introHeading || `Meet ${SITE.name.split(" ")[0]}.`)}</h2>
+        <a class="btn primary" href="about.html">More about me ${ARROW}</a>
+      </div>
+      <p class="intro-big">${esc(HOME.intro)}</p>`;
 
     HOME.sections.forEach(s => {
       const a = document.createElement("a");
       a.className = "panel"; a.href = s.link;
-      a.innerHTML = `<div class="panel-text"><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p><span class="go">View ${esc(s.title)}</span></div>`;
+      a.innerHTML = `<div class="panel-text"><h3>${esc(s.title)}</h3><div><p>${esc(s.text)}</p><span class="go">View ${esc(s.title)} ${ARROW}</span></div></div>`;
       a.prepend(img(s.image, "", s.imageFocus));
       $("#panels").append(a);
     });
+
 
     RND.slice(0, 5).forEach(r => $("#latest").append(rndCard(r)));
   }

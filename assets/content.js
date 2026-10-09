@@ -28,7 +28,7 @@ const SITE = {
 };
 
 const HOME = {
-  "heroVideo": "media/daniel-wee-lighting-and-compositing-showreel-2025-v1-1080p.mp4",
+  "heroVideo": "media/daniel-wee-lighting-and-compositing-showreel-2025-v1-1080p-edit.mp4",
   "heroPoster": "media/screenshot-2026-10-04-161823-crop.png",
   "intro": "Lighting and compositing artist with years of experience on game cinematics and animated productions. Now teaching the next generation of artists at The One Academy.",
   "portrait": "media/img-4056-crop-2.jpg",
@@ -53,7 +53,63 @@ const HOME = {
       "link": "rnd.html"
     }
   ],
-  "heroPosterFocus": "23% 48%"
+  "heroPosterFocus": "23% 48%",
+  "introHeading": "Senior Lighting and Compositing Artist",
+  "logos": [
+    {
+      "name": "Maya",
+      "image": ""
+    },
+    {
+      "name": "Nuke",
+      "image": ""
+    },
+    {
+      "name": "Arnold",
+      "image": ""
+    },
+    {
+      "name": "Redshift",
+      "image": ""
+    },
+    {
+      "name": "Houdini",
+      "image": ""
+    },
+    {
+      "name": "Karma",
+      "image": ""
+    },
+    {
+      "name": "USD",
+      "image": ""
+    },
+    {
+      "name": "After Effects",
+      "image": ""
+    },
+    {
+      "name": "DaVinci Resolve",
+      "image": ""
+    },
+    {
+      "name": "Blender",
+      "image": ""
+    },
+    {
+      "name": "Python",
+      "image": ""
+    },
+    {
+      "name": "Gemini",
+      "image": ""
+    },
+    {
+      "name": "Claude",
+      "image": ""
+    }
+  ],
+  "clientsLabel": "Software and tools I use"
 };
 
 const SHOWREELS = [
@@ -228,8 +284,7 @@ const WORK = [
       {
         "loop": "media/render.mp4"
       }
-    ],
-    "featured": true
+    ]
   },
   {
     "title": "Nuke Compositing Study",
@@ -433,7 +488,8 @@ const WORK = [
         "image": "media/screenshot-2026-10-07-141644-crop.png"
       }
     ],
-    "secretId": "c49cd697abdc6"
+    "secretId": "c49cd697abdc6",
+    "featured": true
   },
   {
     "title": "Realm Royale : Reforged",
