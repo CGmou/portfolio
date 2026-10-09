@@ -54,62 +54,7 @@ const HOME = {
     }
   ],
   "heroPosterFocus": "23% 48%",
-  "introHeading": "Senior Lighting and Compositing Artist",
-  "logos": [
-    {
-      "name": "Maya",
-      "image": ""
-    },
-    {
-      "name": "Nuke",
-      "image": ""
-    },
-    {
-      "name": "Arnold",
-      "image": ""
-    },
-    {
-      "name": "Redshift",
-      "image": ""
-    },
-    {
-      "name": "Houdini",
-      "image": ""
-    },
-    {
-      "name": "Karma",
-      "image": ""
-    },
-    {
-      "name": "USD",
-      "image": ""
-    },
-    {
-      "name": "After Effects",
-      "image": ""
-    },
-    {
-      "name": "DaVinci Resolve",
-      "image": ""
-    },
-    {
-      "name": "Blender",
-      "image": ""
-    },
-    {
-      "name": "Python",
-      "image": ""
-    },
-    {
-      "name": "Gemini",
-      "image": ""
-    },
-    {
-      "name": "Claude",
-      "image": ""
-    }
-  ],
-  "clientsLabel": "Software and tools I use"
+  "introHeading": "Daniel Wee Ke Xian"
 };
 
 const SHOWREELS = [
