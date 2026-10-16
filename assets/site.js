@@ -112,6 +112,119 @@ const img = (src, alt = "", focus) => {
   /* ---------------- Navigation + footer ---------------- */
   const PAGES = [["Home", "index.html", "home"], ["Showreels", "showreels.html", "showreels"], ["Work", "work.html", "work"], ["R&D", "rnd.html", "rnd"], ["About", "about.html", "about"]];
   const navKey = page === "project" ? (params.has("rnd") ? "rnd" : "work") : page;
+  /* ---------------- Download CV ----------------
+     Builds a one-page-style PDF CV from your website profile (About, experience, tools,
+     selected projects and links) right in the visitor's browser. Nothing to upload. */
+  const CV_NAME = `${SITE.name} CV.pdf`;
+  const cvButton = (cls = "btn") => `<button class="${cls} cv-btn" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>Download CV</button>`;
+  function loadScript(url) {
+    return new Promise((ok, fail) => { const s = document.createElement("script"); s.src = url; s.onload = ok; s.onerror = () => fail(new Error("Couldn't load " + url)); document.head.append(s); });
+  }
+  function imageData(url) {   // portrait as a JPEG data URL (skipped quietly if it can't be read)
+    return new Promise((ok) => {
+      if (!url) return ok(null);
+      const im = new Image(); im.crossOrigin = "anonymous";
+      // keep the photo's own shape: shrink it (longest side 800 px) without cropping
+      im.onload = () => { try { const k = Math.min(1, 800 / Math.max(im.naturalWidth, im.naturalHeight)), c = document.createElement("canvas");
+        c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k);
+        c.getContext("2d").drawImage(im, 0, 0, c.width, c.height); ok({ data: c.toDataURL("image/jpeg", .9), ratio: c.width / c.height }); } catch { ok(null); } };
+      im.onerror = () => ok(null); im.src = url;
+    });
+  }
+  // the standard PDF fonts only know Western characters: tidy anything else
+  const pdfText = (t) => String(t || "").replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/[\u2013\u2014]/g, "-").replace(/\u2026/g, "...").replace(/[^\x00-\xFF]/g, "");
+  async function downloadCV(btn) {
+    const label = btn.innerHTML; btn.disabled = true; btn.lastChild.textContent = "Preparing…";
+    try {
+      if (!window.jspdf) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: "mm", format: "a4" });
+      const W = 210, H = 297, M = 18, CW = W - M * 2;
+      const INK = [24, 24, 30], MUTED = [110, 110, 122], ACCENT = [104, 92, 230];
+      let y = M;
+      const site = (SITE.website || "https://danielwee.dpdns.org").replace(/\/?$/, "/");   // public address, never the NAS's
+      // Daniel's CV always presents him as a senior artist
+      const cvTitle = /senior/i.test(SITE.title || "") ? SITE.title : `Senior ${SITE.title || "Lighting and Compositing Artist"}`;
+      const seniorBio = (t) => String(t).replace(/\b(I[’']m|I am) an? (?!senior)(lighting and compositing artist)/i, "$1 a senior $2");
+      const need = (h) => { if (y + h > H - 16) { doc.addPage(); y = M; } };
+      const para = (t, size = 10, color = INK, gap = 1.5, font = "normal") => {
+        doc.setFont("helvetica", font); doc.setFontSize(size); doc.setTextColor(...color);
+        for (const line of doc.splitTextToSize(pdfText(t), CW)) { need(size * .45); doc.text(line, M, y); y += size * .42; }
+        y += gap;
+      };
+      const heading = (t) => {
+        need(14); y += 4;
+        doc.setFont("helvetica", "bold"); doc.setFontSize(9.5); doc.setTextColor(...ACCENT); doc.text(pdfText(t).toUpperCase(), M, y, { charSpace: .6 });
+        y += 2; doc.setDrawColor(225, 222, 245); doc.setLineWidth(.3); doc.line(M, y, W - M, y); y += 5.5;
+      };
+
+      // ---- header ----
+      const photo = await imageData(ABOUT.portrait || HOME.portrait);
+      const textW = photo ? CW - 34 : CW;
+      doc.setFont("helvetica", "bold"); doc.setFontSize(24); doc.setTextColor(...INK); doc.text(pdfText(SITE.name), M, y + 7);
+      y += 13;
+      if (SITE.otherName) { doc.setFont("helvetica", "normal"); doc.setFontSize(10.5); doc.setTextColor(...MUTED); doc.text(pdfText(SITE.otherName), M, y); y += 6; }
+      doc.setFont("helvetica", "bold"); doc.setFontSize(12); doc.setTextColor(...ACCENT); doc.text(pdfText(cvTitle), M, y); y += 7;
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9.5); doc.setTextColor(...INK);
+      const contact = [[SITE.email, "mailto:" + SITE.email], [SITE.location, null]];
+      for (const [t, link] of contact) if (t) { link ? doc.textWithLink(pdfText(t), M, y, { url: link }) : doc.text(pdfText(t), M, y); y += 4.6; }
+      if (SITE.socials && SITE.socials.length) {
+        let x = M;
+        SITE.socials.forEach(([n, u], i) => { const t = pdfText(n); doc.setTextColor(...ACCENT); doc.textWithLink(t, x, y, { url: u }); x += doc.getTextWidth(t) + 5; });
+        y += 4.6;
+      }
+      // photo in the top-right corner at its original proportions (fits within 34 × 42 mm)
+      let photoH = 0;
+      if (photo) {
+        let pw = 34, ph = pw / photo.ratio;
+        if (ph > 42) { ph = 42; pw = ph * photo.ratio; }
+        doc.addImage(photo.data, "JPEG", W - M - pw, M, pw, ph);
+        photoH = ph;
+      }
+      y = Math.max(y, M + photoH) + 4;
+
+      // ---- profile ----
+      heading("Profile");
+      (ABOUT.bio || []).forEach(t => para(seniorBio(t), 10, INK, 2));
+
+      // ---- experience ----
+      if ((ABOUT.experience || []).length) {
+        heading("Experience");
+        for (const x of ABOUT.experience) {
+          need(14);
+          doc.setFont("helvetica", "bold"); doc.setFontSize(10.5); doc.setTextColor(...INK); doc.text(pdfText(x.role), M, y);
+          if (x.time) { doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...MUTED); doc.text(pdfText(x.time), W - M, y, { align: "right" }); }
+          y += 4.8;
+          if (x.place) { doc.setFont("helvetica", "normal"); doc.setFontSize(9.5); doc.setTextColor(...MUTED); doc.text(pdfText(x.place), M, y); y += 4.8; }
+          if (x.details) para(x.details, 9.5, INK, 1);
+          y += 2.5;
+        }
+      }
+
+      // ---- showreel ----
+      if (SHOWREELS.length) {
+        heading("Showreel");
+        const r = SHOWREELS[0];
+        doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(...ACCENT);
+        doc.textWithLink(pdfText(`${r.title}: ${site.replace(/^https?:\/\//, "")}showreels.html`), M, y, { url: r.youtube || r.vimeo || `${site}showreels.html` });
+        y += 6;
+      }
+
+      // ---- footer on every page ----
+      const pages = doc.getNumberOfPages();
+      for (let i = 1; i <= pages; i++) {
+        doc.setPage(i); doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(...MUTED);
+        doc.text(pdfText(`${SITE.name}  ·  ${site.replace(/^https?:\/\//, "").replace(/\/$/, "")}`).replace(/·/g, "\u00B7"), M, H - 9);
+        if (pages > 1) doc.text(`${i} / ${pages}`, W - M, H - 9, { align: "right" });
+      }
+      doc.save(CV_NAME);
+    } catch (e) {
+      alert("Sorry, the CV couldn't be created right now. Please try again in a moment.");
+      console.error(e);
+    } finally { btn.disabled = false; btn.innerHTML = label; }
+  }
+  document.addEventListener("click", (e) => { const b = e.target.closest(".cv-btn"); if (b) { e.preventDefault(); downloadCV(b); } });
+
   // Top line: your name and a contact button (scrolls away with the page)
   const top = document.createElement("header");
   top.className = "topline";
@@ -125,7 +238,8 @@ const img = (src, alt = "", focus) => {
     work: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/>',
     rnd: '<path d="M9.5 3.5h5M10.5 3.5v5.2L5 18.2A1.6 1.6 0 0 0 6.4 20.5h11.2a1.6 1.6 0 0 0 1.4-2.3l-5.5-9.5V3.5"/><path d="M7.5 14.5h9"/>',
     about: '<circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/>',
-    mail: '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m4 7.5 8 6 8-6"/>'
+    mail: '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m4 7.5 8 6 8-6"/>',
+    cv: '<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M13 11.5v6M10.5 15l2.5 2.5 2.5-2.5"/>'
   };
   const svgIcon = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k]}</svg>`;
   const nav = document.createElement("nav");
@@ -136,6 +250,7 @@ const img = (src, alt = "", focus) => {
     ${PAGES.map(([label, href, key]) => item(label, href, key)).join("")}
     <span class="dock-sep" aria-hidden="true"></span>
     ${item("Email me", `mailto:${esc(SITE.email)}`, "mail")}
+    <button class="dock-item cv-btn" type="button" aria-label="Download CV"><span class="dock-ic">${svgIcon("cv")}</span><span class="dock-tip">Download CV</span></button>
   </div>`;
   document.body.append(nav);
   // magnification, like a Mac dock (mouse only)
@@ -159,7 +274,7 @@ const img = (src, alt = "", focus) => {
           <div class="who">${esc(SITE.name)}</div>
           <p>${esc(SITE.title)}, ${esc(SITE.location)}.</p>
         </div>
-        <a class="btn primary" href="mailto:${esc(SITE.email)}">Get in touch ${ARROW}</a>
+        <div class="foot-actions">${cvButton()}<a class="btn primary" href="mailto:${esc(SITE.email)}">Get in touch ${ARROW}</a></div>
       </div>
       <div class="foot-cols">
         <div><h4>Pages</h4><ul>${PAGES.map(([l, href]) => `<li><a href="${href}">${l}</a></li>`).join("")}</ul></div>
@@ -506,5 +621,6 @@ const img = (src, alt = "", focus) => {
     $("#about-tools").innerHTML = ABOUT.tools.map(t => `<li>${esc(t)}</li>`).join("");
     const mail = $("#about-mail"); mail.textContent = SITE.email; mail.href = `mailto:${SITE.email}`;
     $("#about-socials").innerHTML = SITE.socials.map(([n, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a></li>`).join("");
+    $("#about-socials").insertAdjacentHTML("afterend", `<div class="about-cv">${cvButton("btn primary")}</div>`);
   }
 })();

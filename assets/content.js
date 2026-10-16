@@ -92,7 +92,7 @@ const SHOWREELS = [
 const ABOUT = {
   "portrait": "media/img-4056.jpg",
   "bio": [
-    "I’m a lighting and compositing artist from Malaysia. I was previously a Lead Lighting and Compositing Artist at Glow Production and SpaceSheep Studio, lighting and finishing cinematic work for games and animation.",
+    "I’m a Senior lighting and compositing artist from Malaysia. I was previously a Lead Lighting and Compositing Artist at Glow Production and SpaceSheep Studio, lighting and finishing cinematic work for games and animation.",
     "Today I’m a Lighting and Compositing Lecturer at The One Academy, where I teach students how light, colour and compositing turn a 3D scene into a finished shot."
   ],
   "experience": [

@@ -577,3 +577,10 @@ footer { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 7.5rem); }
 .btn:hover .arr { transform: translateX(2px); }
 .btn svg { flex-shrink: 0; }
 @media (prefers-reduced-motion: reduce) { .btn, .btn:hover { transition: none; transform: none; } }
+
+/* ---------- Download CV buttons ---------- */
+.foot-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.about-cv { margin-top: 2rem; }
+.btn > svg:first-child { margin-left: -.2rem; }
+button.dock-item { border: 0; padding: 0; font: inherit; cursor: pointer; }
+.dock-item.cv-btn[disabled] { opacity: .6; }
