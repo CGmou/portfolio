@@ -182,10 +182,10 @@ const WORK = [
         "image": "media/ao.jpg"
       },
       {
-        "image": "media/p.png"
+        "image": "media/n.jpg"
       },
       {
-        "image": "media/n.jpg"
+        "image": "media/p.jpg"
       }
     ]
   },
