@@ -155,6 +155,41 @@ const ABOUT = {
 
 const WORK = [
   {
+    "title": "Minifig - Houdini Study",
+    "category": "Personal",
+    "cover": "media/final.jpg",
+    "details": [
+      [
+        "Year",
+        "2026"
+      ]
+    ],
+    "description": [
+      "Personal houdini study, learning how to do procedural modeling and also using the help with ComfyUi to generate the texture such as Normal, Roughness and also the Face Expression on the Minifig."
+    ],
+    "credits": [],
+    "media": [
+      {
+        "video": "media/minifig-breakdown.mp4"
+      },
+      {
+        "image": "media/final.jpg"
+      },
+      {
+        "image": "media/breakdown.jpg"
+      },
+      {
+        "image": "media/ao.jpg"
+      },
+      {
+        "image": "media/p.png"
+      },
+      {
+        "image": "media/n.jpg"
+      }
+    ]
+  },
+  {
     "title": "Keluang Man",
     "category": "Feature Film",
     "cover": "https://i.ytimg.com/vi/uXRIKf6rH8s/maxresdefault.jpg",
